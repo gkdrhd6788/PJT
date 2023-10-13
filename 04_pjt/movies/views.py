@@ -1,4 +1,5 @@
 from django.shortcuts import render,redirect
+from django.contrib.auth.decorators import login_required
 from .models import Movie,Comment
 from .forms import MovieForm,CommentForm
 from django.contrib.auth import update_session_auth_hash
@@ -13,6 +14,7 @@ def index(request):
     return render(request,'movies/index.html',context)
 
 @require_http_methods(["GET", "POST"])
+@login_required
 def create(request):
     if request.method=="POST":
         form = MovieForm(request.POST)
