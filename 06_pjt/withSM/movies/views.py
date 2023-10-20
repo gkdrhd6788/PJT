@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from .models import Movie
+from .models import Movie,Comment
 from .forms import MovieForm,CommentForm
 
 def index(request):
@@ -13,6 +13,8 @@ def create(request):
     if request.method =="POST":
         form = MovieForm(request.POST)
         if form.is_valid():
+            movie  = form.save(commit=False)
+            movie.user = request.user
             form.save()
             return redirect("movies:index")
     else:
@@ -27,9 +29,11 @@ def create(request):
 def detail(request,movie_pk):
     movie = Movie.objects.get(pk=movie_pk)
     comment_form = CommentForm()
+    comments = movie.comment_set.all()
     context = {
         'movie':movie,
         'comment_form':comment_form,
+        'comments':comments,
     }
     return render(request,'movies/detail.html',context)
     
@@ -56,6 +60,32 @@ def delete(request,movie_pk):
     return redirect("movies:index")
 
 
-# def comments_create(request,movie_pk):
- 
-#     return render(request,'')
+def comments_create(request,movie_pk):
+    movie = Movie.objects.get(pk=movie_pk)
+    comment_form = CommentForm(request.POST)
+    if comment_form.is_valid():
+        comment = comment_form.save(commit=False)
+        comment.movie = movie
+        comment.user=request.user
+        comment_form.save()
+        return redirect('movies:detail',movie_pk)
+    context = {
+        'movie':movie,
+       'comment_form':comment_form, 
+    }
+    return render(request,'movies/detail.html',context)
+
+
+def comments_delete(request,movie_pk,comment_pk):
+    comment = Comment.objects.get(pk=comment_pk)
+    comment.delete()
+    return redirect('movies:detail',movie_pk)
+
+
+def likes(request,movie_pk):
+    movie = Movie.objects.get(pk=movie_pk)
+    if request.user in movie.like_users.all():
+        movie.like_users.remove(request.user)
+    else:
+        movie.like_users.add(request.user)
+    return redirect('movies:index')
