@@ -21,13 +21,9 @@
       <form class="like-forms" data-comment-id="{{ comment.pk }}" data-review-id="{{ review.pk}}">
         {% csrf_token %}
         {% if request.user in comment.like_users.all %}
-        <button class="fa-solid fa-heart" id="like-{{comment.pk}}">
-
-        </button>
+        <button class="fa-solid fa-heart" id="like-{{comment.pk}}"></button>
         {% else %}
-        <button class="fa-regular fa-heart" id="like-{{comment.pk}}">
-    
-        </button>
+        <button class="fa-regular fa-heart" id="like-{{comment.pk}}"></button>
         {% endif %}
       </form>
       좋아요 갯수:<span id="likes-count-{{ comment.pk }}">{{ comment.like_users.all|length }}</span>
@@ -38,9 +34,11 @@
             <form class="reply-like-forms" data-reply-id="{{ reply.pk }}" data-comment-id="{{ comment.pk}}" data-review-id="{{ review.pk}}">
                 {% csrf_token %}
                 {% if request.user in reply.like_users.all %}
-                <button id="reply-like-{{reply.pk}}">좋아요 취소</button>
+                <button class="fa-solid fa-heart " id="reply-like-{{reply.pk}}"></button>
+                {% comment %} <button id="reply-like-{{reply.pk}}">좋아요 취소</button> {% endcomment %}
                 {% else %}
-                <button id="reply-like-{{reply.pk}}">좋아요</button>
+                <button class="fa-regular fa-heart" id="reply-like-{{reply.pk}}"></button>
+                {% comment %} <button id="reply-like-{{reply.pk}}">좋아요</button> {% endcomment %}
                 {% endif %}
               </form>
               대댓글 좋아요 갯수:<span id="reply-likes-count-{{ reply.pk }}">{{ reply.like_users.all|length }}</span>
@@ -120,11 +118,12 @@
             })
                 .then((response)=>{
                     const isLiked=response.data.is_liked
-                    const likeBtn = document.querySelector(`#reply-like-${replyId} > i`)
+                    const replyLikeBtn = document.querySelector(`#reply-like-${replyId}`)
+                    console.log(replyLikeBtn)
                     if (isLiked===true) {
-                        likeBtn.setAttribute("class", "fa-solid fa-heart")
+                      replyLikeBtn.setAttribute("class", "fa-solid fa-heart")
                     } else {
-                        likeBtn.setAttribute("class", "fa-regular fa-heart")
+                      replyLikeBtn.setAttribute("class", "fa-regular fa-heart")
                     }
                     const replyLikesCountTag = document.querySelector(`#reply-likes-count-${replyId}`)
                     replyLikesCountTag.textContent = response.data.reply_likes_count
