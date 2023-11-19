@@ -54,6 +54,7 @@ export const useCounterStore = defineStore('counter', () => {
         console.log(res)
         token.value = res.data.key
         console.log('로그인 완료')
+        //router.push({name:'main페이지'})
       })
       .catch(err=>{
         console.log(err)
@@ -68,7 +69,7 @@ export const useCounterStore = defineStore('counter', () => {
       token.value = null
       console.log('로그아웃 성공')
       console.log(res)
-      router.push({name:'logIn'})
+      router.push({name:'logIn'}) 
     })
     .catch((err)=>{
       console.log(err)
